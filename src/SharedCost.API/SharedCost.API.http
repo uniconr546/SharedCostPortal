@@ -1,0 +1,6 @@
+@SharedCost.API_HostAddress = http://localhost:5028
+
+GET {{SharedCost.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,62 @@
+﻿services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sharedcost-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SQL_SA_PASSWORD}
+    ports:
+      - "14330:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - sharedcost-net
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  backend-api:
+    build:
+      context: .
+      dockerfile: src/SharedCost.API/Dockerfile
+    container_name: sharedcost-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=PhanBoChiPhi;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True;
+      - OidcSettings__Authority=${OIDC_AUTHORITY}
+      - OidcSettings__SigningSecret=${OIDC_SIGNING_SECRET}
+    ports:
+      - "5080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - sharedcost-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  frontend-web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    container_name: sharedcost-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend-api
+    networks:
+      - sharedcost-net
+
+volumes:
+  sqlserver_data:
+
+networks:
+  sharedcost-net:
+    driver: bridge

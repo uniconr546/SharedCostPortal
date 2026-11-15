@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SharedCost.API/SharedCost.API.csproj" />
+    <Project Path="src/SharedCost.Application/SharedCost.Application.csproj" />
+    <Project Path="src/SharedCost.Domain/SharedCost.Domain.csproj" />
+    <Project Path="src/SharedCost.Infrastructure/SharedCost.Infrastructure.csproj" />
+  </Folder>
+</Solution>
