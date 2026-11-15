@@ -2,7 +2,6 @@
 
 **SharedCost Portal** là hệ thống quản trị tài chính doanh nghiệp hỗ trợ khai báo, phân loại, mô phỏng, phân bổ chính thức, kiểm duyệt, khóa sổ và truy xuất nguồn gốc các khoản chi phí dùng chung theo từng kỳ kế toán (`YYYY-MM`).
 
----
 
 ## Tính năng Nghiệp vụ Chính
 
@@ -24,7 +23,6 @@
   - Ghi nhận nhật ký thao tác hệ thống kèm dữ liệu JSON trước và sau khi thay đổi.
   - Bảng điều khiển tổng hợp 6 chỉ số KPI, biểu đồ phân bổ theo đơn vị nhận, biểu đồ theo kỳ kế toán và cảnh báo nghiệp vụ.
 
----
 
 ## Kiến trúc và Công nghệ Sử dụng
 
@@ -37,7 +35,6 @@ Hệ thống được xây dựng theo kiến trúc phân tầng **Clean Archite
 - **Kiểm thử tự động:** xUnit (`SharedCost.UnitTests`).
 - **Triển khai:** Docker & Docker Compose.
 
----
 
 
 ## Yêu cầu Môi trường Cài đặt
@@ -47,28 +44,24 @@ Hệ thống được xây dựng theo kiến trúc phân tầng **Clean Archite
 - **Cơ sở dữ liệu:** Microsoft SQL Server (Express / Developer Edition) và SQL Server Management Studio (SSMS).
 - **IDE (tùy chọn):** Visual Studio 2022/2026 hoặc Visual Studio Code.
 
----
-
 ##  Hướng dẫn Cài đặt và Chạy Chương trình
 
 ### Bước 1: Khởi tạo Cơ sở dữ liệu SQL Server
 1. Mở **SQL Server Management Studio (SSMS)** và kết nối vào máy chủ SQL Server trên máy
 2. SQL trong thư mục `database/` và nhấn **Execute ** để khởi tạo cơ sở dữ liệu `PhanBoChiPhi` cùng toàn bộ bảng, Trigger và dữ liệu mẫu.
 3. Kiểm tra chuỗi kết nối `DefaultConnection` trong tệp `src/SharedCost.API/appsettings.json` sao cho khớp với tên Server SQL trên máy của bạn:
-   ```json
+
    "ConnectionStrings": {
      "DefaultConnection": "Server=.\\SQLEXPRESS;Database=PhanBoChiPhi;Trusted_Connection=True;TrustServerCertificate=True;"
    }
-   ```
 
 ### Bước 2: Khởi chạy Backend API 
 Mở cửa sổ dòng lệnh (Terminal / PowerShell) tại thư mục gốc của dự án và chạy:
 
-```powershell
+
 dotnet restore
 dotnet build src/SharedCost.API/SharedCost.API.csproj
 dotnet run --project src/SharedCost.API/SharedCost.API.csproj --urls "http://localhost:5080"
-```
 
 
 - Tài liệu API tương tác (Swagger UI): `http://localhost:5080/swagger`
@@ -77,47 +70,38 @@ dotnet run --project src/SharedCost.API/SharedCost.API.csproj --urls "http://loc
 ### Bước 3: Khởi chạy Giao diện Frontend 
 Mở một cửa sổ dòng lệnh thứ hai (giữ nguyên cửa sổ Backend ở Bước 2 đang chạy) và thực hiện:
 
-```powershell
 cd frontend
 npm install
 npm run dev
-```
 
 - Mở trình duyệt web truy cập vào địa chỉ: **`http://localhost:5173`**
 
----
 
 ##  Tài khoản Kiểm thử theo Vai trò (Development Demo)
 
 Tại màn hình đăng nhập (`http://localhost:5173`), có thể nhập trực tiếp tên đăng nhập / email công vụ hoặc sử dụng tính năng **Chế độ Demo ** với 5 tài khoản mẫu đã nạp sẵn trong cơ sở dữ liệu:
 
-| Vai trò (`MaRole`) | Tên đăng nhập | Email công vụ | Phạm vi quyền hạn |
-| :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin` | `admin@sharedcost.local` | Toàn quyền quản trị người dùng, phân quyền và danh mục hệ thống |
-| **FINANCE** | `finance` | `finance@sharedcost.local` | Khai báo dữ liệu đầu vào, thiết lập quy tắc, chạy mô phỏng và phân bổ |
-| **REVIEWER** | `reviewer` | `reviewer@sharedcost.local` | Kiểm tra, phê duyệt hoặc từ chối kết quả và thực hiện khóa sổ |
-| **AUDITOR** | `auditor` | `auditor@sharedcost.local` | Tra cứu nguồn gốc dữ liệu, xem nhật ký kiểm toán và báo cáo |
-| **VIEWER** | `viewer` | `viewer@sharedcost.local` | Xem dữ liệu tổng quan và các báo cáo phân bổ được cấp quyền |
+`admin`  `admin@sharedcost.local` Toàn quyền quản trị người dùng, phân quyền và danh mục hệ thống 
+`finance`  `finance@sharedcost.local`  Khai báo dữ liệu đầu vào, thiết lập quy tắc, chạy mô phỏng và phân bổ 
+`reviewer`  `reviewer@sharedcost.local`  Kiểm tra, phê duyệt hoặc từ chối kết quả và thực hiện khóa sổ 
+`auditor` `auditor@sharedcost.local`  Tra cứu nguồn gốc dữ liệu, xem nhật ký kiểm toán và báo cáo
+`viewer` `viewer@sharedcost.local`  Xem dữ liệu tổng quan và các báo cáo phân bổ được cấp quyền 
 
----
 
 ##  Chạy Kiểm thử Tự động 
 
 Để chạy bộ kiểm thử đơn vị kiểm tra công thức phân bổ, thuật toán làm tròn phần dư và các ràng buộc nghiệp vụ:
 
-```powershell
+
 dotnet test tests/SharedCost.UnitTests/SharedCost.UnitTests.csproj --logger "console;verbosity=normal"
-```
 
----
 
-## 8. Triển khai bằng Docker Compose 
+## Triển khai bằng Docker Compose 
 
 Nếu máy tính đã cài đặt **Docker Desktop**, bạn có thể khởi chạy đồng thời SQL Server, Backend API và Frontend chỉ với một lệnh:
 
-```powershell
+
 Copy-Item .env.example .env
 # Cập nhật SQL_SA_PASSWORD và OIDC_SIGNING_SECRET trong tệp .env trước khi chạy
 docker compose up -d --build
-```
 
